@@ -7,25 +7,18 @@ import mpi.Request;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class Shuffle {
 
   private static Logger LOG = Logger.getLogger(Shuffle.class.getName());
 
-  /**
-   * This method assumes that the world size is less than 127 and fits into a short
-   *
-   * @param w1 worker id of the first worker
-   * @param w2 worker id of the second worker
-   * @return tag for the communication between w1 and w2
-   */
-  public int getTag(int w1, int w2) {
-    int tag = Math.min(w1, w2) | Math.max(w1, w2) << 16;
-    return tag;
+  private void waitForCompletion(List<Request> pendingRequests) throws MPIException {
+    for (Request pendingRequest : pendingRequests) {
+      pendingRequest.waitFor();
+    }
+    pendingRequests.clear();
   }
 
   public NodePayload shuffle(NodePayload localGraph) throws MPIException {
@@ -41,7 +34,7 @@ public class Shuffle {
     int[] nodes = localGraph.getNodes();
     int[] clusters = localGraph.getClusters();
 
-    Map<Integer, Integer> clusterMap = new HashMap<>();
+    TieBreak tieBreak = new TieBreak();
 
     for (int i = 0; i < nodes.length; i++) {
       int destination = nodes[i] % worldSize;
@@ -50,7 +43,7 @@ public class Shuffle {
         partitions[destination].add(clusters[i]);
       } else {
         // build Map
-        clusterMap.put(nodes[i], clusters[i]);
+        tieBreak.add(nodes[i], clusters[i]);
       }
     }
 
@@ -71,12 +64,7 @@ public class Shuffle {
     }
 
     // wait for communication
-    for (Request pendingRequest : pendingRequests) {
-      pendingRequest.waitFor();
-    }
-
-    // clear old requests
-    pendingRequests.clear();
+    waitForCompletion(pendingRequests);
 
     // now we have the sizes
     for (int i = 0; i < worldSize; i++) {
@@ -89,11 +77,25 @@ public class Shuffle {
         }
         Request sendReq = MPI.COMM_WORLD.iSend(sendingBuffer, partitions[i].size(), MPI.INT, i, thisWorker);
         recvBuffers[i] = ByteBuffer.allocateDirect(Integer.SIZE * size);
+
         Request recvReq = MPI.COMM_WORLD.iRecv(recvBuffers[i], size, MPI.INT, i, i);
         pendingRequests.add(sendReq);
         pendingRequests.add(recvReq);
       }
     }
+
+    this.waitForCompletion(pendingRequests);
+
+    // adding incoming labels to the tie break
+    for (int i = 0; i < worldSize; i++) {
+      if (i != thisWorker) {
+        IntBuffer buffer = recvBuffers[i].asIntBuffer();
+        tieBreak.add(buffer.get(), buffer.get());
+      }
+    }
+
+    // now do the tie break
+    tieBreak.compute();
 
     return null;
   }
