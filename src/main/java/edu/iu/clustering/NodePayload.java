@@ -6,9 +6,9 @@ import java.util.List;
 
 public class NodePayload {
 
-    private int[] nodes;
-    private int[] clusters;
-    private int[][] graph;
+    private final int[] nodes;
+    private final int[] clusters;
+    private final int[][] graph;
 
     public NodePayload(int[] nodes, int[] clusters, int[][] graph) {
         this.nodes = nodes;
@@ -16,11 +16,10 @@ public class NodePayload {
         this.graph = graph;
     }
 
-
-    public void compute() {
+    public void compute(int workerId) {
         boolean[] clusteredNodes = new boolean[this.nodes.length];
         Arrays.fill(clusteredNodes, false);
-        int clusterId = 1;
+        int clusterId = workerId << 24 | 1; // 8 bits for workerId, 24 for cluster Id -> 16777215 maximum clusters
         for (int i = 0; i < clusteredNodes.length; i++) {
             if (!clusteredNodes[i]) {
                 boolean[] visited = this.runBFS(i);
@@ -32,10 +31,8 @@ public class NodePayload {
                 }
                 clusterId++;
             }
-
         }
     }
-
 
     public int[] getNodes() {
         return nodes;
@@ -75,8 +72,5 @@ public class NodePayload {
             }
         }
         return visited;
-
     }
-
-
 }
