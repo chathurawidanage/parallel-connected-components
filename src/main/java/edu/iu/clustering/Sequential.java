@@ -8,7 +8,7 @@ public class Sequential {
   public static void main(String[] args) {
     File currentDirFile = new File(".");
     String root = currentDirFile.getAbsolutePath();
-    NodePayload payload = GraphBuilder.buildGraph(root + "/src/main/resources/cora.txt");
+    NodePayload payload = GraphBuilder.buildGraphWithAdjMatrix(root + "/src/main/resources/cora.txt");
     payload.compute(0);
 
     int[] nodes = payload.getNodes();
