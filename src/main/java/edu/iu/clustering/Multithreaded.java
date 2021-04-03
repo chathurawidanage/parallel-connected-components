@@ -19,7 +19,7 @@ public class Multithreaded {
             executorService.submit(() -> {
                 File currentDirFile = new File(".");
                 String root = currentDirFile.getAbsolutePath();
-                NodePayload payload = GraphBuilder.buildGraph(root + "/src/main/resources/cora-" + threadId + ".txt");
+                NodePayload payload = GraphBuilder.buildGraphWithAdjMatrix(root + "/src/main/resources/cora-" + threadId + ".txt");
                 payload.compute(threadId);
 
                 int[] nodes = payload.getNodes();

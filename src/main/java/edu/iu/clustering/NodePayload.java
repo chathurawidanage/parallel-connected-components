@@ -8,12 +8,12 @@ public class NodePayload {
 
     private final int[] nodes;
     private final int[] clusters;
-    private final int[][] graph;
+    private Executor executor;
 
-    public NodePayload(int[] nodes, int[] clusters, int[][] graph) {
+    public NodePayload(int[] nodes, int[] clusters, Executor executor) {
         this.nodes = nodes;
         this.clusters = clusters;
-        this.graph = graph;
+        this.executor = executor;
     }
 
     public void compute(int workerId) {
@@ -22,7 +22,7 @@ public class NodePayload {
         int clusterId = workerId << 24 | 1; // 8 bits for workerId, 24 for cluster Id -> 16777215 maximum clusters
         for (int i = 0; i < clusteredNodes.length; i++) {
             if (!clusteredNodes[i]) {
-                boolean[] visited = this.runBFS(i);
+                boolean[] visited = executor.runBFS(this.nodes.length, i);
                 for (int j = 0; j < visited.length; j++) {
                     if (visited[j]) {
                         this.clusters[j] = clusterId;
@@ -42,35 +42,4 @@ public class NodePayload {
         return clusters;
     }
 
-    private boolean[] runBFS(int start) {
-        boolean[] visited = new boolean[this.nodes.length];
-        Arrays.fill(visited, false);
-        List<Integer> q = new ArrayList<>();
-        q.add(start);
-        // Set source as visited
-        visited[start] = true;
-
-        int vis;
-        while (!q.isEmpty()) {
-            vis = q.get(0);
-
-            // Print the current node
-            q.remove(q.get(0));
-
-            // For every adjacent vertex to
-            // the current vertex
-            for (int i = 0; i < this.nodes.length; i++) {
-                if (this.graph[vis][i] == 1 && (!visited[i])) {
-
-                    // Push the adjacent node to
-                    // the queue
-                    q.add(i);
-
-                    // Set
-                    visited[i] = true;
-                }
-            }
-        }
-        return visited;
-    }
 }
