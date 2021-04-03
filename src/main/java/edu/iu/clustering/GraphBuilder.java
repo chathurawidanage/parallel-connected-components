@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GraphBuilder {
+
+    private static final Logger LOG = Logger.getLogger(GraphBuilder.class.getName());
 
     public static NodePayload buildGraph(String filePath) {
         CSVReader reader = null;
@@ -36,10 +40,8 @@ public class GraphBuilder {
             });
             return new NodePayload(nodes, new int[nodes.length], adjacencyMatrix);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.log(Level.SEVERE, "Failed to load the graph", e);
         }
         return null;
     }
-
-
 }
