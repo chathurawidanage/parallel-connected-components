@@ -15,6 +15,5 @@ public class TieBreak {
 
     public void compute() {
         List<Set<Integer>> clusterSets = new ArrayList<>();
-
     }
 }
