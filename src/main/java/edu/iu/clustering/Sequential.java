@@ -5,21 +5,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Sequential {
-  public static void main(String[] args) {
-    File currentDirFile = new File(".");
-    String root = currentDirFile.getAbsolutePath();
-    NodePayload payload = GraphBuilder.buildGraph(root + "/src/main/resources/cora.txt");
-    payload.compute(0);
+    public static void main(String[] args) {
+        long t1 = System.currentTimeMillis();
 
-    int[] nodes = payload.getNodes();
-    int[] clusters = payload.getClusters();
+        File currentDirFile = new File(".");
+        String root = currentDirFile.getAbsolutePath();
+        NodePayload payload = GraphBuilder.buildGraph(root + "/src/main/resources/data/amazon/com-amazon.ungraph.txt");
+        payload.compute(0);
 
-    Set<Integer> uniqueClus = new HashSet<>();
-    for (int cluster : clusters) {
-      uniqueClus.add(cluster);
+        int[] nodes = payload.getNodes();
+        int[] clusters = payload.getClusters();
+
+        Set<Integer> uniqueClus = new HashSet<>();
+        for (int cluster : clusters) {
+            uniqueClus.add(cluster);
+        }
+
+        System.out.println("Total nodes : " + nodes.length);
+        System.out.println("Weakly connected components : " + uniqueClus.size());
+        System.out.println("Time : " + (System.currentTimeMillis() - t1));
     }
-
-    System.out.println("Total nodes : " + nodes.length);
-    System.out.println("Weakly connected components : " + uniqueClus.size());
-  }
 }

@@ -7,6 +7,8 @@ import java.util.concurrent.Executors;
 
 public class Multithreaded {
     public static void main(String[] args) throws InterruptedException {
+        long t1 = System.currentTimeMillis();
+
         int threads = 4;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
@@ -25,7 +27,7 @@ public class Multithreaded {
                 int[] nodes = payload.getNodes();
                 int[] clusters = payload.getClusters();
                 for (int j = 0; j < nodes.length; j++) {
-                    tieBreak.add(nodes[j], clusters[j]);
+                    tieBreak.syncAdd(nodes[j], clusters[j]);
                 }
                 latch.countDown();
             });
@@ -33,5 +35,8 @@ public class Multithreaded {
         latch.await();
 
         tieBreak.compute();
+
+        System.out.println("Time : " + (System.currentTimeMillis() - t1));
+        executorService.shutdown();
     }
 }

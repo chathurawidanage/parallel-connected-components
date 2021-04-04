@@ -22,7 +22,7 @@ public class GraphBuilder {
             String[] nextLine; //read one line at a time
             while ((nextLine = reader.readNext()) != null) {
                 for (String token : nextLine) {
-                    String[] edge = token.split(" ");
+                    String[] edge = token.split("\\s+");
                     int startNode = Integer.parseInt(edge[0].trim());
                     int endNode = Integer.parseInt(edge[1].trim());
                     edgeList.computeIfAbsent(startNode, list -> new ArrayList<>()).add(endNode);
