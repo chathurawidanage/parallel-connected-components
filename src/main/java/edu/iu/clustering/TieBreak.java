@@ -1,5 +1,7 @@
 package edu.iu.clustering;
 
+import edu.iu.clustering.executors.AdjMatrixBasedExecutor;
+
 import java.util.*;
 
 public class TieBreak {
@@ -39,7 +41,7 @@ public class TieBreak {
             });
         });
 
-        NodePayload payload = new NodePayload(labels, new int[labels.length], adjacencyMatrix);
+        NodePayload payload = new NodePayload(labels, new int[labels.length], new AdjMatrixBasedExecutor(adjacencyMatrix));
         payload.compute(0);
 
         int[] nodesLabels = payload.getNodes();

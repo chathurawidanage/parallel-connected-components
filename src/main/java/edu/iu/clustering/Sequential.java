@@ -10,7 +10,7 @@ public class Sequential {
 
         File currentDirFile = new File(".");
         String root = currentDirFile.getAbsolutePath();
-        NodePayload payload = GraphBuilder.buildGraph(root + "/src/main/resources/data/amazon/com-amazon.ungraph.txt");
+        NodePayload payload = GraphBuilder.buildGraphWithCSR(root + "/src/main/resources/data/amazon/com-amazon.ungraph.txt");
         payload.compute(0);
 
         int[] nodes = payload.getNodes();

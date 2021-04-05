@@ -1,6 +1,7 @@
 package edu.iu.clustering;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,7 +22,7 @@ public class Multithreaded {
             executorService.submit(() -> {
                 File currentDirFile = new File(".");
                 String root = currentDirFile.getAbsolutePath();
-                NodePayload payload = GraphBuilder.buildGraphWithAdjMatrix(root + "/src/main/resources/cora-" + threadId + ".txt");
+                NodePayload payload = GraphBuilder.buildGraphWithAdjMatrix(root + "/src/main/resources/data/cora/cora-" + threadId + ".txt");
                 payload.compute(threadId);
 
                 int[] nodes = payload.getNodes();
