@@ -50,6 +50,7 @@ public class GraphBuilder {
 
 
     public static NodePayload buildGraphWithCSR(String filePath) {
+        LOG.info("Loading graph....");
         CSVReader reader = null;
         LinkedHashMap<Integer, ArrayList<Integer>> edgeList = new LinkedHashMap<>();
         try {
@@ -64,12 +65,16 @@ public class GraphBuilder {
                     edgeList.computeIfAbsent(endNode, list -> new ArrayList<>()).add(startNode);
                 }
             }
+            LOG.info("Read file to the memory.");
+
             int[] offsets = new int[edgeList.keySet().size()];
             List<Integer> edges = new ArrayList<>();
             List<Integer> listKeys = new ArrayList<>(edgeList.keySet());
             int[] nodes = listKeys.stream().mapToInt(key -> key).toArray();
 
             int offsetValue = 0;
+            LOG.info("Building CSR format for " + nodes.length + " nodes");
+            int fivePercent = (int) (nodes.length * 0.05);
             for (int i = 0; i < nodes.length; i++) {
                 offsets[i] = offsetValue;
                 ArrayList<Integer> list = edgeList.get(listKeys.get(listKeys.indexOf(nodes[i])));
@@ -77,11 +82,15 @@ public class GraphBuilder {
                     edges.add(listKeys.indexOf(val));
                 });
                 offsetValue = offsetValue + list.size();
+                if (i % fivePercent == 0) {
+                    LOG.info("Build progress : " + Math.floor(i * 100 / nodes.length) + "%");
+                }
             }
             Executor executor = new CSRBasedExecutor(offsets, edges.stream().mapToInt(key -> key).toArray());
+            LOG.info("Graph loaded!");
             return new NodePayload(nodes, new int[nodes.length], executor);
         } catch (
-                IOException e) {
+            IOException e) {
             LOG.log(Level.SEVERE, "Failed to load the graph", e);
         }
         return null;

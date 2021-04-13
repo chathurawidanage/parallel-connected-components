@@ -1,10 +1,11 @@
 package edu.iu.clustering;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.logging.Logger;
 
 public class NodePayload {
+
+    private static Logger LOG = Logger.getLogger(NodePayload.class.getName());
 
     private final int[] nodes;
     private final int[] clusters;
@@ -17,6 +18,7 @@ public class NodePayload {
     }
 
     public void compute(int workerId) {
+        LOG.info("Computing clusters...");
         boolean[] clusteredNodes = new boolean[this.nodes.length];
         Arrays.fill(clusteredNodes, false);
         int clusterId = workerId << 24 | 1; // 8 bits for workerId, 24 for cluster Id -> 16777215 maximum clusters
@@ -30,6 +32,9 @@ public class NodePayload {
                     }
                 }
                 clusterId++;
+            }
+            if (i % 100 == 0) {
+                LOG.info("Computed " + Math.floor(i * 100 / clusteredNodes.length) + "%");
             }
         }
     }

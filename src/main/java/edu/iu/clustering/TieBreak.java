@@ -18,7 +18,7 @@ public class TieBreak {
         nodes.computeIfAbsent(node, n -> new ArrayList<>()).add(cluster);
     }
 
-    public void compute() {
+    public NodePayload compute() {
         LinkedHashMap<Integer, ArrayList<Integer>> edgeList = new LinkedHashMap<>();
 
         nodes.values().forEach(list -> {
@@ -59,5 +59,6 @@ public class TieBreak {
             finalNodes[i] = integer;
             finalClusters[i++] = labelToGroup.get(this.nodes.get(integer).get(0));
         }
+        return new NodePayload(finalNodes, finalClusters, null);
     }
 }
