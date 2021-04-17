@@ -34,9 +34,9 @@ public class NodePayload {
                 clusterId++;
 
             }
-            if (i % 100 == 0) {
-                LOG.info("Computed " + Math.floor(i * 100 / clusteredNodes.length) + "%");
-            }
+//            if (i % 100 == 0) {
+//                LOG.info("Computed " + Math.floor(i * 100 / clusteredNodes.length) + "%");
+//            }
         }
     }
 
@@ -48,4 +48,11 @@ public class NodePayload {
         return clusters;
     }
 
+    @Override
+    public String toString() {
+        return "NodePayload{" +
+            "nodes=" + Arrays.toString(nodes) +
+            ", clusters=" + Arrays.toString(clusters) +
+            '}';
+    }
 }
