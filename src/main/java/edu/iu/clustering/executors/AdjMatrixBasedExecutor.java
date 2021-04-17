@@ -2,9 +2,7 @@ package edu.iu.clustering.executors;
 
 import edu.iu.clustering.Executor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class AdjMatrixBasedExecutor implements Executor {
 
@@ -15,7 +13,7 @@ public class AdjMatrixBasedExecutor implements Executor {
     }
 
     @Override
-    public boolean[] runBFS(int numOFVertices, int start) {
+    public Set<Integer> runBFS(int numOFVertices, int start) {
         boolean[] visited = new boolean[numOFVertices];
         Arrays.fill(visited, false);
         List<Integer> q = new ArrayList<>();
@@ -44,6 +42,7 @@ public class AdjMatrixBasedExecutor implements Executor {
                 }
             }
         }
-        return visited;
+        // todo change
+        return Collections.emptySet();
     }
 }

@@ -3,7 +3,9 @@ package edu.iu.clustering.executors;
 import edu.iu.clustering.Executor;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 public class CSRBasedExecutor implements Executor {
     private int[] offset;
@@ -15,7 +17,7 @@ public class CSRBasedExecutor implements Executor {
     }
 
     @Override
-    public boolean[] runBFS(int numOFVertices, int start) {
+    public Set<Integer> runBFS(int numOFVertices, int start) {
         boolean[] visited = new boolean[numOFVertices];
         Arrays.fill(visited, false);
         LinkedList<Integer> q = new LinkedList<>();
@@ -48,6 +50,7 @@ public class CSRBasedExecutor implements Executor {
                 }
             }
         }
-        return visited;
+        // todo change
+        return Collections.emptySet();
     }
 }

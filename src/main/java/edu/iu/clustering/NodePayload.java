@@ -1,6 +1,7 @@
 package edu.iu.clustering;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class NodePayload {
@@ -24,14 +25,14 @@ public class NodePayload {
         int clusterId = workerId << 24 | 1; // 8 bits for workerId, 24 for cluster Id -> 16777215 maximum clusters
         for (int i = 0; i < clusteredNodes.length; i++) {
             if (!clusteredNodes[i]) {
-                boolean[] visited = executor.runBFS(this.nodes.length, i);
-                for (int j = 0; j < visited.length; j++) {
-                    if (visited[j]) {
-                        this.clusters[j] = clusterId;
-                        clusteredNodes[j] = true;
-                    }
+                Set<Integer> visited = executor.runBFS(this.nodes.length, i);
+                LOG.info("Looping...");
+                for (Integer index : visited) {
+                    this.clusters[index] = clusterId;
+                    clusteredNodes[index] = true;
                 }
                 clusterId++;
+
             }
             if (i % 100 == 0) {
                 LOG.info("Computed " + Math.floor(i * 100 / clusteredNodes.length) + "%");

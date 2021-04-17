@@ -1,6 +1,8 @@
 package edu.iu.clustering;
 
+import java.util.Set;
+
 public interface Executor {
 
-     boolean[] runBFS(int numOFVertices, int start);
+     Set<Integer> runBFS(int numOFVertices, int start);
 }

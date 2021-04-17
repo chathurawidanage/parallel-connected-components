@@ -21,9 +21,8 @@ public class EdgeListBasedExecutor implements Executor {
     }
 
     @Override
-    public boolean[] runBFS(int numOFVertices, int startIndex) {
-        boolean[] visited = new boolean[numOFVertices];
-        Arrays.fill(visited, false);
+    public Set<Integer> runBFS(int numOFVertices, int startIndex) {
+        Set<Integer> visited = new HashSet<>();
 
         // this q will always keep the real node value. Not the index
         LinkedList<Integer> q = new LinkedList<>();
@@ -32,7 +31,7 @@ public class EdgeListBasedExecutor implements Executor {
         q.add(nodes[startIndex]);
 
         // Set source as visited
-        visited[startIndex] = true;
+        visited.add(startIndex);
 
         int vis;
         while (!q.isEmpty()) {
@@ -42,14 +41,14 @@ public class EdgeListBasedExecutor implements Executor {
             // the current vertex
             for (int adj : edgeList.getOrDefault(vis, Collections.emptySet())) {
                 int index = indexMap.get(adj);
-                if (!visited[index]) {
+                if (!visited.contains(index)) {
 
                     // Push the adjacent node to
                     // the queue
                     q.add(adj);
 
                     // Set
-                    visited[index] = true;
+                    visited.add(index);
                 }
             }
         }
