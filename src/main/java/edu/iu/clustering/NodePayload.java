@@ -26,7 +26,7 @@ public class NodePayload {
         for (int i = 0; i < clusteredNodes.length; i++) {
             if (!clusteredNodes[i]) {
                 Set<Integer> visited = executor.runBFS(this.nodes.length, i);
-                LOG.info("Looping...");
+                //LOG.info("Looping...");
                 for (Integer index : visited) {
                     this.clusters[index] = clusterId;
                     clusteredNodes[index] = true;

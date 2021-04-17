@@ -1,6 +1,6 @@
 package edu.iu.clustering;
 
-import edu.iu.clustering.executors.AdjMatrixBasedExecutor;
+import edu.iu.clustering.executors.EdgeListBasedExecutor;
 
 import java.util.*;
 
@@ -19,29 +19,22 @@ public class TieBreak {
     }
 
     public NodePayload compute() {
-        LinkedHashMap<Integer, ArrayList<Integer>> edgeList = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
 
         nodes.values().forEach(list -> {
             for (int i = 0; i < list.size(); i++) {
                 for (int j = i; j < list.size(); j++) {
-                    edgeList.computeIfAbsent(list.get(i), l -> new ArrayList<>()).add(list.get(j));
-                    edgeList.computeIfAbsent(list.get(j), l -> new ArrayList<>()).add(list.get(i));
+                    edgeList.computeIfAbsent(list.get(i), l -> new HashSet<>()).add(list.get(j));
+                    edgeList.computeIfAbsent(list.get(j), l -> new HashSet<>()).add(list.get(i));
                 }
             }
         });
 
-        int[][] adjacencyMatrix = new int[edgeList.keySet().size()][edgeList.keySet().size()];
-        List<Integer> listKeys = new ArrayList<>(edgeList.keySet());
 
-        int[] labels = listKeys.stream().mapToInt(key -> key).toArray();
-        listKeys.forEach(key -> {
-            ArrayList<Integer> list = edgeList.get(key);
-            list.forEach(value -> {
-                adjacencyMatrix[listKeys.indexOf(key)][listKeys.indexOf(value)] = 1;
-            });
-        });
+        int[] labels = edgeList.keySet().stream().sorted().mapToInt(key -> key).toArray();
 
-        NodePayload payload = new NodePayload(labels, new int[labels.length], new AdjMatrixBasedExecutor(adjacencyMatrix));
+
+        NodePayload payload = new NodePayload(labels, new int[labels.length], new EdgeListBasedExecutor(labels, edgeList));
         payload.compute(0);
 
         int[] nodesLabels = payload.getNodes();
