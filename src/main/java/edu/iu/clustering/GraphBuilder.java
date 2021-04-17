@@ -117,8 +117,7 @@ public class GraphBuilder {
             Executor executor = new EdgeListBasedExecutor(nodes, edgeList);
             LOG.info("Graph loaded!");
             return new NodePayload(nodes, new int[nodes.length], executor);
-        } catch (
-            IOException e) {
+        } catch (IOException e) {
             LOG.log(Level.SEVERE, "Failed to load the graph", e);
         }
         return null;

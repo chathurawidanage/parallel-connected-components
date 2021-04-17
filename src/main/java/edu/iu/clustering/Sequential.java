@@ -10,7 +10,8 @@ public class Sequential {
         String root = currentDirFile.getAbsolutePath();
 //        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/com-amazon.ungraph.txt");
         //NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora.txt");
-        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small.txt");
+//        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small.txt");
+        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/livejournal/com-lj.ungraph.txt");
         payload.compute(0);
 
         Utils.printStats(payload);

@@ -4,7 +4,6 @@ import mpi.MPI;
 import mpi.MPIException;
 
 import java.io.File;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Distributed {
@@ -12,7 +11,7 @@ public class Distributed {
     private static Logger LOG = Logger.getLogger(Distributed.class.getName());
 
     public static void main(String[] args) throws MPIException {
-        LogManager.getLogManager().reset();
+        //LogManager.getLogManager().reset();
 
         long t1 = System.currentTimeMillis();
         MPI.Init(args);
@@ -24,7 +23,8 @@ public class Distributed {
         String root = currentDirFile.getAbsolutePath();
 
 //        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora-" + (rank + 1) + ".txt");
-        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + (rank + 1) + ".txt");
+        //NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + (rank + 1) + ".txt");
+        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/livejournal/li-" + (rank + 1) + ".txt");
         //NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (rank + 1) + ".txt");
         payload.compute(rank);
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 wget https://snap.stanford.edu/data/bigdata/communities/com-lj.ungraph.txt.gz
 gzip -d com-lj.ungraph.txt.gz
 tail -n +5 com-lj.ungraph.txt > com-lj.ungraph.txt.new
