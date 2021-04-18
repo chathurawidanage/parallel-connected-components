@@ -67,8 +67,6 @@ public class TieBreak {
             }
         }
 
-        System.out.println("LLLLLLLLLLLLLLLLLLL" + lowestLabelOfGroup.size());
-
         int[] finalNodes = new int[nodes.size()];
         int[] finalClusters = new int[nodes.size()];
 
@@ -76,14 +74,7 @@ public class TieBreak {
         for (Integer integer : this.nodes.keySet()) {
             finalNodes[i] = integer;
             int anyLabel = this.nodes.get(integer).iterator().next();
-            try {
-                finalClusters[i++] = lowestLabelOfGroup.get(labelToGroup.get(anyLabel));
-            } catch (NullPointerException nex) {
-                System.out.println(nodes.keySet().size() + "," + nodesLabels.length);
-                System.out.println(labelToGroup.get(integer));
-                System.out.println(lowestLabelOfGroup.get(labelToGroup.get(integer)));
-                throw nex;
-            }
+            finalClusters[i++] = lowestLabelOfGroup.get(labelToGroup.get(anyLabel));
         }
         return new NodePayload(finalNodes, finalClusters, null);
     }

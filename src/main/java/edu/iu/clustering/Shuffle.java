@@ -176,8 +176,6 @@ public class Shuffle {
             NodePayload finalNodeGroups = finalLabelTrieBreak.compute();
             Utils.printStats(finalNodeGroups);
         }
-
-
         return intermediateGroups;
     }
 }

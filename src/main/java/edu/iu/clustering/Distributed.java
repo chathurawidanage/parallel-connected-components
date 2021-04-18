@@ -19,17 +19,24 @@ public class Distributed {
         int worldSize = MPI.COMM_WORLD.getSize();
         LOG.info("Starting worker " + rank + " of " + worldSize);
 
-        File currentDirFile = new File(".");
-        String root = currentDirFile.getAbsolutePath();
+        NodePayload payload;
 
-//        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora-" + (rank + 1) + ".txt");
-        //NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + (rank + 1) + ".txt");
-        NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/livejournal/li-" + (rank + 1) + ".txt");
-        //NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (rank + 1) + ".txt");
+        if (args.length == 1) {
+            String path = args[0].replace("${rank}", rank + "");
+            payload = GraphBuilder.buildGraphWithEdgeList(path);
+        } else {
+            File currentDirFile = new File(".");
+            String root = currentDirFile.getAbsolutePath();
+
+            payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora-" + (rank + 1) + ".txt");
+            //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + (rank + 1) + ".txt");
+            //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/livejournal/li-" + (rank + 1) + ".txt");
+            //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (rank + 1) + ".txt");
+        }
+
         payload.compute(rank);
 
         //System.out.println(payload);
-
 
         Shuffle shuffle = new Shuffle();
         NodePayload shuffledPayload = shuffle.shuffle(payload);

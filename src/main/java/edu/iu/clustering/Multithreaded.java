@@ -19,11 +19,21 @@ public class Multithreaded {
         for (int i = 0; i < threads; i++) {
             final int threadId = i + 1;
             executorService.submit(() -> {
-                File currentDirFile = new File(".");
-                String root = currentDirFile.getAbsolutePath();
-//                NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora-" + threadId + ".txt");
-//                NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + threadId + ".txt");
-                NodePayload payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + threadId + ".txt");
+                NodePayload payload;
+
+                if (args.length == 1) {
+                    String path = args[0].replace("${rank}", threadId + "");
+                    payload = GraphBuilder.buildGraphWithEdgeList(path);
+                } else {
+                    File currentDirFile = new File(".");
+                    String root = currentDirFile.getAbsolutePath();
+
+                    payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/cora/cora-" + (threadId + 1) + ".txt");
+                    //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/amazon/amazon-" + (threadId + 1) + ".txt");
+                    //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/livejournal/li-" + (threadId + 1) + ".txt");
+                    //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (threadId + 1) + ".txt");
+                }
+
                 payload.compute(threadId);
 
                 int[] nodes = payload.getNodes();
