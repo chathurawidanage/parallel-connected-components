@@ -34,6 +34,8 @@ public class Distributed {
             //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (rank + 1) + ".txt");
         }
 
+        long t2 = System.currentTimeMillis();
+
         payload.compute(rank);
 
         //System.out.println(payload);
@@ -44,7 +46,11 @@ public class Distributed {
         MPI.COMM_WORLD.barrier();
         //Utils.printStats(shuffledPayload);
 
-        System.out.println("Time : " + (System.currentTimeMillis() - t1));
+        String workerTag = "[" + rank + "] ";
+
+        System.out.println(workerTag + "Time : " + (System.currentTimeMillis() - t1));
+        System.out.println(workerTag + "Data Load Time : " + (t2 - t1));
+        System.out.println(workerTag + "Computation Time : " + (System.currentTimeMillis() - t2));
         MPI.Finalize();
     }
 

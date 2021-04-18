@@ -1,6 +1,7 @@
 package edu.iu.clustering;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,8 +26,11 @@ public class Multithreaded {
 
         CountDownLatch latch = new CountDownLatch(threads);
 
+        final long[] dataloadTimes = new long[threads];
+        final long[] computeTimes = new long[threads];
+
         for (int i = 0; i < threads; i++) {
-            final int threadId = i + 1;
+            final int threadId = i;
             executorService.submit(() -> {
                 NodePayload payload;
 
@@ -43,6 +47,8 @@ public class Multithreaded {
                     //payload = GraphBuilder.buildGraphWithEdgeList(root + "/src/main/resources/data/small/small-" + (threadId + 1) + ".txt");
                 }
 
+                dataloadTimes[threadId] = System.currentTimeMillis();
+
                 payload.compute(threadId);
 
                 int[] nodes = payload.getNodes();
@@ -51,14 +57,22 @@ public class Multithreaded {
                     tieBreak.syncAdd(nodes[j], clusters[j]);
                 }
                 latch.countDown();
+                computeTimes[threadId] = System.currentTimeMillis();
             });
         }
         latch.await();
-
+        long t2 = System.currentTimeMillis();
         NodePayload compute = tieBreak.compute();
         Utils.printStats(compute);
 
         System.out.println("Time : " + (System.currentTimeMillis() - t1));
+        for (int i = 0; i < threads; i++) {
+            System.out.println("Thread " + i);
+            System.out.println("\tData Load Times : " + (dataloadTimes[i] - t1));
+            System.out.println("\tThread Compute Times : " + (computeTimes[i] - dataloadTimes[i]));
+        }
+        System.out.println("Tie break time : " + (System.currentTimeMillis() - t2));
+
         executorService.shutdown();
     }
 }
