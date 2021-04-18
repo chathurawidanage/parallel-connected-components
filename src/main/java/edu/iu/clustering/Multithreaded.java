@@ -4,12 +4,21 @@ import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class Multithreaded {
+    private static final Logger LOG = Logger.getLogger(Multithreaded.class.getName());
+
     public static void main(String[] args) throws InterruptedException {
         long t1 = System.currentTimeMillis();
 
         int threads = 4;
+        if (args.length == 1) {
+            threads = Integer.parseInt(args[0]);
+        }
+
+        LOG.info("Running with " + threads + " threads.");
+
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         final TieBreak tieBreak = new TieBreak();
@@ -21,8 +30,8 @@ public class Multithreaded {
             executorService.submit(() -> {
                 NodePayload payload;
 
-                if (args.length == 1) {
-                    String path = args[0].replace("${rank}", threadId + "");
+                if (args.length == 2) {
+                    String path = args[1].replace("${rank}", threadId + "");
                     payload = GraphBuilder.buildGraphWithEdgeList(path);
                 } else {
                     File currentDirFile = new File(".");
