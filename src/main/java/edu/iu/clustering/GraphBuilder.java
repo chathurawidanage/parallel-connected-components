@@ -17,26 +17,40 @@ public class GraphBuilder {
 
     public static NodePayload buildGraphWithAdjMatrix(String filePath) {
         CSVReader reader = null;
-        LinkedHashMap<Integer, ArrayList<Integer>> edgeList = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Node> edgeList = new LinkedHashMap<>();
         try {
             reader = new CSVReader(new FileReader(filePath));
             String[] nextLine; //read one line at a time
+            int count = 0;
             while ((nextLine = reader.readNext()) != null) {
                 for (String token : nextLine) {
                     String[] edge = token.split("\\s+");
                     int startNode = Integer.parseInt(edge[0].trim());
                     int endNode = Integer.parseInt(edge[1].trim());
-                    edgeList.computeIfAbsent(startNode, list -> new ArrayList<>()).add(endNode);
-                    edgeList.computeIfAbsent(endNode, list -> new ArrayList<>()).add(startNode);
+                    Node stNode = edgeList.get(startNode);
+                    Node enNode  = edgeList.get(endNode);
+                    if (stNode == null) {
+                        stNode = new Node(count,startNode);
+                        count++;
+                    }
+                    if (enNode == null) {
+                        enNode = new Node(count, endNode);
+                        count++;
+                    }
+                    stNode.addArrayList(enNode);
+                    enNode.addArrayList(stNode);
+
+                    edgeList.put(startNode,stNode);
+                    edgeList.put(endNode,enNode);
                 }
             }
             int[][] adjacencyMatrix = new int[edgeList.keySet().size()][edgeList.keySet().size()];
             List<Integer> listKeys = new ArrayList<>(edgeList.keySet());
             int[] nodes = listKeys.stream().mapToInt(key -> key).toArray();
             listKeys.forEach(key -> {
-                ArrayList<Integer> list = edgeList.get(key);
-                list.forEach(value -> {
-                    adjacencyMatrix[listKeys.indexOf(key)][listKeys.indexOf(value)] = 1;
+                Node node = edgeList.get(key);
+                node.getArrayList().forEach(value -> {
+                    adjacencyMatrix[node.myIndex][value.myIndex] = 1;
                 });
             });
             Executor executor = new AdjMatrixBasedExecutor(adjacencyMatrix);
@@ -51,22 +65,40 @@ public class GraphBuilder {
     public static NodePayload buildGraphWithCSR(String filePath) {
         LOG.info("Loading graph....");
         CSVReader reader = null;
-        LinkedHashMap<Integer, ArrayList<Integer>> edgeList = new LinkedHashMap<>();
+        LinkedHashMap<Integer, Node> edgeList = new LinkedHashMap<>();
         try {
             reader = new CSVReader(new FileReader(filePath));
             String[] nextLine; //read one line at a time
+            int count = 0;
             while ((nextLine = reader.readNext()) != null) {
                 for (String token : nextLine) {
                     String[] edge = token.split("\\s+");
                     int startNode = Integer.parseInt(edge[0].trim());
                     int endNode = Integer.parseInt(edge[1].trim());
-                    edgeList.computeIfAbsent(startNode, list -> new ArrayList<>()).add(endNode);
-                    edgeList.computeIfAbsent(endNode, list -> new ArrayList<>()).add(startNode);
+                    Node stNode = edgeList.get(startNode);
+                    Node enNode  = edgeList.get(endNode);
+                    if (stNode == null) {
+                        stNode = new Node(count,startNode);
+                        count++;
+                    }
+                    if (enNode == null) {
+                        enNode = new Node(count, endNode);
+                        count++;
+                    }
+                    stNode.addArrayList(enNode);
+                    enNode.addArrayList(stNode);
+
+                    edgeList.put(startNode,stNode);
+                    edgeList.put(endNode,enNode);
+
+//                    edgeList.computeIfAbsent(startNode, list -> new HashMap<>()).put(endNode);
+//                    edgeList.computeIfAbsent(endNode, list -> new HashMap<>()).put(startNode);
                 }
             }
             LOG.info("Read file to the memory.");
 
             int[] offsets = new int[edgeList.keySet().size()];
+            System.out.println("Offset size " + offsets.length);
             List<Integer> edges = new ArrayList<>();
             List<Integer> listKeys = new ArrayList<>(edgeList.keySet());
             int[] nodes = listKeys.stream().mapToInt(key -> key).toArray();
@@ -76,20 +108,21 @@ public class GraphBuilder {
             int fivePercent = (int) (nodes.length * 0.05);
             for (int i = 0; i < nodes.length; i++) {
                 offsets[i] = offsetValue;
-                ArrayList<Integer> list = edgeList.get(listKeys.get(listKeys.indexOf(nodes[i])));
-                list.forEach(val -> {
-                    edges.add(listKeys.indexOf(val));
+//                ArrayList<Integer> list = edgeList.get(nodes[i]);
+                Node node = edgeList.get(nodes[i]);
+                node.getArrayList().forEach((val) -> {
+                    edges.add(val.myIndex);
                 });
-                offsetValue = offsetValue + list.size();
+                offsetValue = offsetValue +  node.getArrayList().size();
                 if (i % fivePercent == 0) {
                     LOG.info("Build progress : " + Math.floor(i * 100 / nodes.length) + "%");
                 }
             }
-            Executor executor = new CSRBasedExecutor(offsets, edges.stream().mapToInt(key -> key).toArray());
+            Executor executor = new CSRBasedExecutor(nodes, offsets, edges.stream().mapToInt(key -> key).toArray());
             LOG.info("Graph loaded!");
             return new NodePayload(nodes, new int[nodes.length], executor);
         } catch (
-            IOException e) {
+                IOException e) {
             LOG.log(Level.SEVERE, "Failed to load the graph", e);
         }
         return null;
@@ -122,4 +155,6 @@ public class GraphBuilder {
         }
         return null;
     }
+
+
 }

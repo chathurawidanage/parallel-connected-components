@@ -2,28 +2,29 @@ package edu.iu.clustering.executors;
 
 import edu.iu.clustering.Executor;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 public class CSRBasedExecutor implements Executor {
     private int[] offset;
     private int[] edgeList;
+    private int[] nodes;
 
-    public CSRBasedExecutor(int[] offset, int[] edgeList) {
+    public CSRBasedExecutor(int[] nodes, int[] offset, int[] edgeList) {
         this.offset = offset;
         this.edgeList = edgeList;
+        this.nodes = nodes;
     }
 
     @Override
     public Set<Integer> runBFS(int numOFVertices, int start) {
-        boolean[] visited = new boolean[numOFVertices];
-        Arrays.fill(visited, false);
+        Set<Integer> visited = new HashSet<>();
+
         LinkedList<Integer> q = new LinkedList<>();
         q.add(start);
         // Set source as visited
-        visited[start] = true;
+        visited.add(start);
 
         while (q.size() != 0) {
 
@@ -44,13 +45,12 @@ public class CSRBasedExecutor implements Executor {
 
             for (int i = startIndex; i < endIndex; i++) {
                 int n = edgeList[i];
-                if (!visited[n]) {
-                    visited[n] = true;
+                if (!visited.contains(n)) {
+                    visited.add(n);
                     q.add(n);
                 }
             }
         }
-        // todo change
-        return Collections.emptySet();
+        return visited;
     }
 }
