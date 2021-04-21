@@ -13,7 +13,7 @@ public class Multithreaded {
         long t1 = System.currentTimeMillis();
 
         int threads = 4;
-        if (args.length == 1) {
+        if (args.length > 1) {
             threads = Integer.parseInt(args[0]);
         }
 
@@ -34,10 +34,10 @@ public class Multithreaded {
                 NodePayload payload;
 
                 if (args.length == 2) {
-                    String path = args[1].replace("${rank}", threadId + "");
+                    String path = args[1].replace("{rank}", (threadId + 1) + "");
                     payload = GraphBuilder.buildGraphWithEdgeList(path);
                 } else if (args.length == 3) {
-                    String path = args[1].replace("${rank}", threadId + "");
+                    String path = args[1].replace("{rank}", (threadId + 1) + "");
                     String dataStructure = args[2];
                     if (dataStructure.equals("csr")) {
                         payload = GraphBuilder.buildGraphWithCSR(path);
