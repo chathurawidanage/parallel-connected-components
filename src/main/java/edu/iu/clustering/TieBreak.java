@@ -29,9 +29,6 @@ public class TieBreak {
         nodes.values().forEach(set -> {
             List<Integer> list = new ArrayList<>(set);
             Collections.sort(list);
-            if (list.size() > 4) {
-                System.out.println("Impossible!!" + list.size() + " , " + new HashSet<>(list).size());
-            }
             for (int i = 0; i < list.size(); i++) {
                 for (int j = i; j < list.size(); j++) {
                     edgeList.computeIfAbsent(list.get(i), l -> new HashSet<>()).add(list.get(j));
