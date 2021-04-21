@@ -15,7 +15,7 @@ public class Distributed {
 
         long t1 = System.currentTimeMillis();
         MPI.Init(args);
-        int rank = MPI.COMM_WORLD.getRank();
+        int rank = MPI.COMM_WORLD.getRank() + 1;
         int worldSize = MPI.COMM_WORLD.getSize();
         LOG.info("Starting worker " + rank + " of " + worldSize);
 
