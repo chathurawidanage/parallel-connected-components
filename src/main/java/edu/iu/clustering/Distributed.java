@@ -15,7 +15,7 @@ public class Distributed {
 
         long t1 = System.currentTimeMillis();
         MPI.Init(args);
-        int rank = MPI.COMM_WORLD.getRank();
+        int rank = MPI.COMM_WORLD.getRank() + 1;
         int worldSize = MPI.COMM_WORLD.getSize();
         LOG.info("Starting worker " + rank + " of " + worldSize);
 
@@ -23,6 +23,7 @@ public class Distributed {
 
         if (args.length == 1) {
             String path = args[0].replace("${rank}", rank + "");
+            System.out.println(" file path " + path);
             payload = GraphBuilder.buildGraphWithEdgeList(path);
 
         } else if (args.length == 2) {
