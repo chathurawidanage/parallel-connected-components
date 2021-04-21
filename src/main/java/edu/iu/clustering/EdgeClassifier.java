@@ -19,7 +19,9 @@ public class EdgeClassifier {
                 String[] edges = nextLine.split(":");
                 String edge = edges[0].replace(",", " ");
                 String cluster = edges[1];
-                String dstFile = sourceFile + "_" + cluster + ".txt";
+                int clusterId = Integer.parseInt(cluster);
+                String[] sourceFiles = sourceFile.split(".");
+                String dstFile = sourceFiles[0] + "-" + clusterId + ".txt";
 
                 File file = new File(dstFile);
 
