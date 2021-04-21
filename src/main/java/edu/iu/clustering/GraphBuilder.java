@@ -16,6 +16,7 @@ public class GraphBuilder {
     private static final Logger LOG = Logger.getLogger(GraphBuilder.class.getName());
 
     public static NodePayload buildGraphWithAdjMatrix(String filePath) {
+        LOG.info("Loading graph.... into Adjacency matrix");
         CSVReader reader = null;
         LinkedHashMap<Integer, Node> edgeList = new LinkedHashMap<>();
         try {
@@ -63,7 +64,7 @@ public class GraphBuilder {
 
 
     public static NodePayload buildGraphWithCSR(String filePath) {
-        LOG.info("Loading graph....");
+        LOG.info("Loading graph.... into CSR");
         CSVReader reader = null;
         LinkedHashMap<Integer, Node> edgeList = new LinkedHashMap<>();
         try {
@@ -129,7 +130,7 @@ public class GraphBuilder {
     }
 
     public static NodePayload buildGraphWithEdgeList(String filePath) {
-        LOG.info("Loading graph....");
+        LOG.info("Loading graph.... into edge list");
         CSVReader reader = null;
         LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
         try {

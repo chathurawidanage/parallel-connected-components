@@ -10,6 +10,16 @@ public class Sequential {
 
         if (args.length == 1) {
             payload = GraphBuilder.buildGraphWithEdgeList(args[0]);
+        } else if (args.length == 2) {
+            String dataStructure = args[1];
+            if (dataStructure.equals("csr")) {
+                payload = GraphBuilder.buildGraphWithCSR(args[0]);
+            } else if (dataStructure.equals("adj")) {
+                payload = GraphBuilder.buildGraphWithAdjMatrix(args[0]);
+            } else {
+                payload = GraphBuilder.buildGraphWithEdgeList(args[0]);
+            }
+
         } else {
             File currentDirFile = new File(".");
             String root = currentDirFile.getAbsolutePath();

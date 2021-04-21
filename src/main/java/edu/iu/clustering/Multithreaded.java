@@ -1,7 +1,6 @@
 package edu.iu.clustering;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,6 +36,16 @@ public class Multithreaded {
                 if (args.length == 2) {
                     String path = args[1].replace("${rank}", threadId + "");
                     payload = GraphBuilder.buildGraphWithEdgeList(path);
+                } else if (args.length == 3) {
+                    String path = args[1].replace("${rank}", threadId + "");
+                    String dataStructure = args[2];
+                    if (dataStructure.equals("csr")) {
+                        payload = GraphBuilder.buildGraphWithCSR(path);
+                    } else if (dataStructure.equals("adj")) {
+                        payload = GraphBuilder.buildGraphWithAdjMatrix(path);
+                    } else {
+                        payload = GraphBuilder.buildGraphWithEdgeList(path);
+                    }
                 } else {
                     File currentDirFile = new File(".");
                     String root = currentDirFile.getAbsolutePath();
