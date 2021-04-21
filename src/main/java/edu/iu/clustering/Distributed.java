@@ -22,11 +22,11 @@ public class Distributed {
         NodePayload payload;
 
         if (args.length == 1) {
-            String path = args[0].replace("${rank}", rank + "");
+            String path = args[0].replace("{rank}", rank + "");
             payload = GraphBuilder.buildGraphWithEdgeList(path);
 
         } else if (args.length == 2) {
-            String path = args[0].replace("${rank}", rank + "");
+            String path = args[0].replace("{rank}", rank + "");
             String dataStructure = args[1];
             if (dataStructure.equals("csr")) {
                 payload = GraphBuilder.buildGraphWithCSR(path);

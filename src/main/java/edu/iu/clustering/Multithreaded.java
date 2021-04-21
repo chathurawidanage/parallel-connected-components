@@ -34,10 +34,10 @@ public class Multithreaded {
                 NodePayload payload;
 
                 if (args.length == 2) {
-                    String path = args[1].replace("${rank}", threadId + "");
+                    String path = args[1].replace("{rank}", threadId + "");
                     payload = GraphBuilder.buildGraphWithEdgeList(path);
                 } else if (args.length == 3) {
-                    String path = args[1].replace("${rank}", threadId + "");
+                    String path = args[1].replace("{rank}", threadId + "");
                     String dataStructure = args[2];
                     if (dataStructure.equals("csr")) {
                         payload = GraphBuilder.buildGraphWithCSR(path);
