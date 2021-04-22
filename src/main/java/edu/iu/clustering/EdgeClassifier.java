@@ -1,7 +1,6 @@
 package edu.iu.clustering;
 
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -73,7 +72,7 @@ public class EdgeClassifier {
             int count = 1;
             while ((nextLine = reader.readLine()) != null && !nextLine.equals("")) {
                 int mod = count % noOfPartitions;
-                mod = mod +1;
+                mod = mod + 1;
                 String dstFile = sourceFile + "-" + mod + ".txt";
 
                 File file = new File(dstFile);
@@ -130,20 +129,22 @@ public class EdgeClassifier {
                 totalCount++;
             }
             int diff = totalCount % noOfPartitions;
-            int partitionSize = (totalCount - diff)/ noOfPartitions;
-            System.out.println("Total count "+ totalCount);
-            System.out.println("Partition Size"+ partitionSize);
-            System.out.println("Diff"+ diff);
+            int partitionSize = (totalCount - diff) / noOfPartitions;
+            System.out.println("Total count " + totalCount);
+            System.out.println("Partition Size" + partitionSize);
+            System.out.println("Diff" + diff);
             String nextLine; //read one line at a time
             String dstFile = null;
             int count = 1;
             int multiple = 1;
             reader2 = new BufferedReader(new FileReader(sourceFile));
             while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
-                if (count < multiple* partitionSize) {
+                if (count < multiple * partitionSize) {
+                    dstFile = sourceFile + "-" + multiple + ".txt";
+                } else if (multiple < noOfPartitions) {
+                    multiple++;
                     dstFile = sourceFile + "-" + multiple + ".txt";
                 } else {
-                    multiple++;
                     dstFile = sourceFile + "-" + multiple + ".txt";
                 }
                 File file = new File(dstFile);
@@ -187,7 +188,7 @@ public class EdgeClassifier {
     public static void main(String[] args) throws IOException {
         if (args.length == 1) {
             EdgeClassifier.writeToFile(args[0]);
-        } else if (args.length ==2) {
+        } else if (args.length == 2) {
 //            EdgeClassifier.partitionRoundRobin(args);
             EdgeClassifier.partitionNaively(args);
         }
