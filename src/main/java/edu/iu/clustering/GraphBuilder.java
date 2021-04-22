@@ -132,7 +132,7 @@ public class GraphBuilder {
     public static NodePayload buildGraphWithEdgeList(String filePath) {
         LOG.info("Loading graph.... into edge list");
         CSVReader reader = null;
-        LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
+        Map<Integer, Set<Integer>> edgeList = new HashMap<>();
         try {
             reader = new CSVReader(new FileReader(filePath));
             String[] nextLine; //read one line at a time
@@ -147,7 +147,7 @@ public class GraphBuilder {
             }
             LOG.info("Read file to the memory.");
 
-            int[] nodes = edgeList.keySet().stream().sorted().mapToInt(key -> key).toArray();
+            int[] nodes = edgeList.keySet().stream().mapToInt(key -> key).toArray();
             Executor executor = new EdgeListBasedExecutor(nodes, edgeList);
             LOG.info("Graph loaded!");
             return new NodePayload(nodes, new int[nodes.length], executor);

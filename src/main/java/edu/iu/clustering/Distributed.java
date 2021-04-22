@@ -15,18 +15,18 @@ public class Distributed {
 
         long t1 = System.currentTimeMillis();
         MPI.Init(args);
-        int rank = MPI.COMM_WORLD.getRank() + 1;
+        int rank = MPI.COMM_WORLD.getRank();
         int worldSize = MPI.COMM_WORLD.getSize();
         LOG.info("Starting worker " + rank + " of " + worldSize);
 
         NodePayload payload;
 
         if (args.length == 1) {
-            String path = args[0].replace("{rank}", rank + "");
+            String path = args[0].replace("{rank}", (rank+1) + "");
             payload = GraphBuilder.buildGraphWithEdgeList(path);
 
         } else if (args.length == 2) {
-            String path = args[0].replace("{rank}", rank + "");
+            String path = args[0].replace("{rank}", (rank+1) + "");
             String dataStructure = args[1];
             if (dataStructure.equals("csr")) {
                 payload = GraphBuilder.buildGraphWithCSR(path);
