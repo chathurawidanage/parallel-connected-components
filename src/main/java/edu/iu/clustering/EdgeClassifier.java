@@ -1,6 +1,7 @@
 package edu.iu.clustering;
 
 import java.io.*;
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -130,13 +131,15 @@ public class EdgeClassifier {
             }
             int diff = totalCount % noOfPartitions;
             int partitionSize = (totalCount - diff)/ noOfPartitions;
-
+            System.out.println("Total count "+ totalCount);
+            System.out.println("Partition Size"+ partitionSize);
+            System.out.println("Diff"+ diff);
             String nextLine; //read one line at a time
             String dstFile = null;
             int count = 1;
             int multiple = 1;
             reader2 = new BufferedReader(new FileReader(sourceFile));
-            while ((nextLine = reader2.readLine()) != null && !reader2.equals("")) {
+            while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
                 if (count < multiple* partitionSize) {
                     dstFile = sourceFile + "-" + multiple + ".txt";
                 } else {
