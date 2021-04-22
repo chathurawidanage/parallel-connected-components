@@ -95,6 +95,7 @@ public class EdgeClassifier {
                 bufferedWriter.write(nextLine);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
+                count++;
 
             }
             System.out.println("Exist");
