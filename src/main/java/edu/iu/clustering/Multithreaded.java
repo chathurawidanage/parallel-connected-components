@@ -19,7 +19,7 @@ public class Multithreaded {
 
         LOG.info("Running with " + threads + " threads.");
 
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        ExecutorService executorService = Executors.newFixedThreadPool(threads);
 
         final TieBreak tieBreak = new TieBreak();
 
