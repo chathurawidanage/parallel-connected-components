@@ -1,9 +1,12 @@
 package edu.iu.clustering;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Multithreaded {
@@ -27,6 +30,9 @@ public class Multithreaded {
 
         final long[] dataloadTimes = new long[threads];
         final long[] computeTimes = new long[threads];
+
+        Arrays.fill(dataloadTimes, 0);
+        Arrays.fill(computeTimes, 0);
 
         for (int i = 0; i < threads; i++) {
             final int threadId = i;
@@ -72,15 +78,47 @@ public class Multithreaded {
         latch.await();
         long t2 = System.currentTimeMillis();
         NodePayload compute = tieBreak.compute();
+
         Utils.printStats(compute);
 
-        System.out.println("Time : " + (System.currentTimeMillis() - t1));
+        long t3 = System.currentTimeMillis();
+        System.out.println("Time : " + (t3 - t1));
         for (int i = 0; i < threads; i++) {
             System.out.println("Thread " + i);
             System.out.println("\tData Load Times : " + (dataloadTimes[i] - t1));
             System.out.println("\tThread Compute Times : " + (computeTimes[i] - dataloadTimes[i]));
+
+            // for aggregation
+            computeTimes[i] = computeTimes[i] - dataloadTimes[i];
+            dataloadTimes[i] = dataloadTimes[i] - t1;
+
         }
-        System.out.println("Tie break time : " + (System.currentTimeMillis() - t2));
+        System.out.println("Tie break time : " + (t3 - t2));
+
+
+        try {
+            System.out.println(Arrays.toString(dataloadTimes));
+            Utils.logResults("multithreaded-min", threads,
+                Arrays.stream(dataloadTimes).min().getAsLong(),
+                Arrays.stream(computeTimes).min().getAsLong(),
+                (t3 - t2),
+                (t3 - t1)
+            );
+            Utils.logResults("multithreaded-avg", threads,
+                (long) Arrays.stream(dataloadTimes).average().getAsDouble(),
+                (long) Arrays.stream(computeTimes).average().getAsDouble(),
+                (t3 - t2),
+                (t3 - t1)
+            );
+            Utils.logResults("multithreaded-avg", threads,
+                Arrays.stream(dataloadTimes).max().getAsLong(),
+                Arrays.stream(computeTimes).max().getAsLong(),
+                (t3 - t2),
+                (t3 - t1)
+            );
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Failed when writing results", e);
+        }
 
         executorService.shutdown();
     }

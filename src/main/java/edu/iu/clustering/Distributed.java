@@ -4,6 +4,8 @@ import mpi.MPI;
 import mpi.MPIException;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Distributed {
@@ -22,11 +24,11 @@ public class Distributed {
         NodePayload payload;
 
         if (args.length == 1) {
-            String path = args[0].replace("{rank}", (rank+1) + "");
+            String path = args[0].replace("{rank}", (rank + 1) + "");
             payload = GraphBuilder.buildGraphWithEdgeList(path);
 
         } else if (args.length == 2) {
-            String path = args[0].replace("{rank}", (rank+1) + "");
+            String path = args[0].replace("{rank}", (rank + 1) + "");
             String dataStructure = args[1];
             if (dataStructure.equals("csr")) {
                 payload = GraphBuilder.buildGraphWithCSR(path);
@@ -49,6 +51,8 @@ public class Distributed {
 
         payload.compute(rank);
 
+        long t3 = System.currentTimeMillis();
+
         //System.out.println(payload);
 
         Shuffle shuffle = new Shuffle();
@@ -59,9 +63,58 @@ public class Distributed {
 
         String workerTag = "[" + rank + "] ";
 
-        System.out.println(workerTag + "Time : " + (System.currentTimeMillis() - t1));
+        long t4 = System.currentTimeMillis();
+
         System.out.println(workerTag + "Data Load Time : " + (t2 - t1));
-        System.out.println(workerTag + "Computation Time : " + (System.currentTimeMillis() - t2));
+        System.out.println(workerTag + "Computation Time : " + (t3 - t2));
+        System.out.println(workerTag + "Tie Breaking Time : " + (t4 - t3));
+        System.out.println(workerTag + "Total Time : " + (t4 - t1));
+
+        long[] timings = new long[]{
+            (t2 - t1),
+            (t3- t2),
+            (t4 - t3),
+            (t4 - t1)
+        };
+
+        long[] minTimes = new long[timings.length];
+        long[] maxTimes = new long[timings.length];
+        long[] sumTimes = new long[timings.length];
+
+        MPI.COMM_WORLD.allReduce(timings, sumTimes, timings.length, MPI.LONG, MPI.SUM);
+        MPI.COMM_WORLD.allReduce(timings, maxTimes, timings.length, MPI.LONG, MPI.MAX);
+        MPI.COMM_WORLD.allReduce(timings, minTimes, timings.length, MPI.LONG, MPI.MIN);
+
+        if (rank == 0) {
+            try {
+                Utils.logResults(
+                    "distributed-min",
+                    worldSize,
+                    minTimes[0],
+                    minTimes[1],
+                    minTimes[2],
+                    minTimes[3]
+                );
+                Utils.logResults(
+                    "distributed-avg",
+                    worldSize,
+                    sumTimes[0] / worldSize,
+                    sumTimes[1] / worldSize,
+                    sumTimes[2] / worldSize,
+                    sumTimes[3] / worldSize
+                );
+                Utils.logResults(
+                    "distributed-max",
+                    worldSize,
+                    maxTimes[0],
+                    maxTimes[1],
+                    maxTimes[2],
+                    maxTimes[3]
+                );
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Failed to write the results to the file", e);
+            }
+        }
         MPI.Finalize();
     }
 
