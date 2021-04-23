@@ -124,13 +124,11 @@ public class EdgeClassifier {
         HashMap<String, BufferedWriter> writerHashMap = new HashMap<>();
         HashMap<String, FileWriter> fileHashMap = new HashMap<>();
         LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
-        LinkedList list = new LinkedList();
         try {
             reader = Files.newBufferedReader(Path.of(sourceFile));
             String next;
             int totalCount = 0;
             while ((next = reader.readLine()) != null && !next.equals("")) {
-                list.add(next);
                 totalCount++;
             }
             int diff = totalCount % noOfPartitions;
@@ -144,7 +142,6 @@ public class EdgeClassifier {
             int multiple = 1;
            reader2 = Files.newBufferedReader(Path.of(sourceFile));
           while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
-                nextLine = (String)list.pop();
                 if (count < multiple * partitionSize) {
                     dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else if (multiple < noOfPartitions) {
