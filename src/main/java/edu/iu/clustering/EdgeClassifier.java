@@ -3,6 +3,7 @@ package edu.iu.clustering;
 import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class EdgeClassifier {
@@ -121,11 +122,13 @@ public class EdgeClassifier {
         HashMap<String, BufferedWriter> writerHashMap = new HashMap<>();
         HashMap<String, FileWriter> fileHashMap = new HashMap<>();
         LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
+        LinkedList list = new LinkedList();
         try {
             reader = new BufferedReader(new FileReader(sourceFile));
             String next;
             int totalCount = 0;
             while ((next = reader.readLine()) != null && !next.equals("")) {
+                list.add(next);
                 totalCount++;
             }
             int diff = totalCount % noOfPartitions;
@@ -137,8 +140,10 @@ public class EdgeClassifier {
             String dstFile = null;
             int count = 1;
             int multiple = 1;
-            reader2 = new BufferedReader(new FileReader(sourceFile));
-            while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
+//            reader2 = new BufferedReader(new FileReader(sourceFile));
+//            while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
+            while (list.isEmpty()) {
+                nextLine = (String)list.pop();
                 if (count < multiple * partitionSize) {
                     dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else if (multiple < noOfPartitions) {
@@ -166,7 +171,7 @@ public class EdgeClassifier {
                 }
                 bufferedWriter.write(nextLine);
                 bufferedWriter.newLine();
-                bufferedWriter.flush();
+//                bufferedWriter.flush();
                 count++;
 
             }
