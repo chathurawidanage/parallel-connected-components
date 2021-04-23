@@ -140,12 +140,12 @@ public class EdgeClassifier {
             reader2 = new BufferedReader(new FileReader(sourceFile));
             while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
                 if (count < multiple * partitionSize) {
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else if (multiple < noOfPartitions) {
                     multiple++;
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else {
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 }
                 File file = new File(dstFile);
 
