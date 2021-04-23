@@ -155,7 +155,7 @@ public class EdgeClassifier {
                 if (!file.exists()) {
                     file.createNewFile();
                 }
-                
+
                 BufferedWriter bufferedWriter = writerHashMap.get(dstFile);
                 if (bufferedWriter == null) {
                     bufferedWriter = Files.newBufferedWriter(Path.of(dstFile));
@@ -163,7 +163,6 @@ public class EdgeClassifier {
                 }
                 bufferedWriter.write(nextLine);
                 bufferedWriter.newLine();
-                bufferedWriter.flush();
                 count++;
 
             }
