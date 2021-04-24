@@ -1,8 +1,11 @@
 package edu.iu.clustering;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class EdgeClassifier {
@@ -122,7 +125,7 @@ public class EdgeClassifier {
         HashMap<String, FileWriter> fileHashMap = new HashMap<>();
         LinkedHashMap<Integer, Set<Integer>> edgeList = new LinkedHashMap<>();
         try {
-            reader = new BufferedReader(new FileReader(sourceFile));
+            reader = Files.newBufferedReader(Path.of(sourceFile));
             String next;
             int totalCount = 0;
             while ((next = reader.readLine()) != null && !next.equals("")) {
@@ -137,15 +140,15 @@ public class EdgeClassifier {
             String dstFile = null;
             int count = 1;
             int multiple = 1;
-            reader2 = new BufferedReader(new FileReader(sourceFile));
-            while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
+           reader2 = Files.newBufferedReader(Path.of(sourceFile));
+          while ((nextLine = reader2.readLine()) != null && !nextLine.isEmpty()) {
                 if (count < multiple * partitionSize) {
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else if (multiple < noOfPartitions) {
                     multiple++;
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 } else {
-                    dstFile = sourceFile + "-" + multiple + ".txt";
+                    dstFile = sourceFile + "P" + noOfPartitions + "-" + multiple + ".txt";
                 }
                 File file = new File(dstFile);
 
@@ -153,20 +156,13 @@ public class EdgeClassifier {
                     file.createNewFile();
                 }
 
-                FileWriter fw = fileHashMap.get(dstFile);
-                if (fw == null) {
-                    fw = new FileWriter(file, true);
-                    fileHashMap.put(dstFile, fw);
-                }
-
                 BufferedWriter bufferedWriter = writerHashMap.get(dstFile);
                 if (bufferedWriter == null) {
-                    bufferedWriter = new BufferedWriter(fw);
+                    bufferedWriter = Files.newBufferedWriter(Path.of(dstFile));
                     writerHashMap.put(dstFile, bufferedWriter);
                 }
                 bufferedWriter.write(nextLine);
                 bufferedWriter.newLine();
-                bufferedWriter.flush();
                 count++;
 
             }
