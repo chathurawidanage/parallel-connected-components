@@ -66,11 +66,13 @@ public class Multithreaded {
 
                 payload.compute(threadId);
 
-                int[] nodes = payload.getNodes();
-                int[] clusters = payload.getClusters();
-                for (int j = 0; j < nodes.length; j++) {
-                    tieBreak.syncAdd(nodes[j], clusters[j]);
-                }
+                tieBreak.threadAdd(payload);
+
+//                int[] nodes = payload.getNodes();
+//                int[] clusters = payload.getClusters();
+//                for (int j = 0; j < nodes.length; j++) {
+//                    tieBreak.syncAdd(nodes[j], clusters[j]);
+//                }
                 latch.countDown();
                 computeTimes[threadId] = System.currentTimeMillis();
             });
@@ -110,7 +112,7 @@ public class Multithreaded {
                 (t3 - t2),
                 (t3 - t1)
             );
-            Utils.logResults("multithreaded-avg", threads,
+            Utils.logResults("multithreaded-max", threads,
                 Arrays.stream(dataloadTimes).max().getAsLong(),
                 Arrays.stream(computeTimes).max().getAsLong(),
                 (t3 - t2),

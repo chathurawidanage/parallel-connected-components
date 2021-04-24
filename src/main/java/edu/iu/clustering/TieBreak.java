@@ -11,12 +11,18 @@ public class TieBreak {
 
     private final HashMap<Integer, Set<Integer>> nodes = new HashMap<>();
 
+    private List<NodePayload> threadData = new ArrayList<>();
+
     public void add(int node, int cluster) {
         this.nodes.computeIfAbsent(node, n -> new HashSet<>()).add(cluster);
     }
 
     public synchronized void syncAdd(int node, int cluster) {
         this.add(node, cluster);
+    }
+
+    public synchronized void threadAdd(NodePayload payload) {
+        threadData.add(payload);
     }
 
     /**
@@ -47,6 +53,16 @@ public class TieBreak {
     }
 
     public NodePayload compute() {
+        Iterator<NodePayload> iterator = this.threadData.iterator();
+        while (iterator.hasNext()) {
+            NodePayload payload = iterator.next();
+            int[] nodes = payload.getNodes();
+            int[] clusters = payload.getClusters();
+            for (int j = 0; j < nodes.length; j++) {
+                this.add(nodes[j], clusters[j]);
+            }
+            iterator.remove();
+        }
         return this.compute(0);
     }
 
