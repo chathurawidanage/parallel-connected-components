@@ -12,11 +12,8 @@ public class Distributed {
 
     private static Logger LOG = Logger.getLogger(Distributed.class.getName());
 
-    public static void main(String[] args) throws MPIException {
-        //LogManager.getLogManager().reset();
-
+    private static void run(String args[], boolean last) throws MPIException {
         long t1 = System.currentTimeMillis();
-        MPI.Init(args);
         int rank = MPI.COMM_WORLD.getRank();
         int worldSize = MPI.COMM_WORLD.getSize();
         LOG.info("Starting worker " + rank + " of " + worldSize);
@@ -72,7 +69,7 @@ public class Distributed {
 
         long[] timings = new long[]{
             (t2 - t1),
-            (t3- t2),
+            (t3 - t2),
             (t4 - t3),
             (t4 - t1)
         };
@@ -85,7 +82,7 @@ public class Distributed {
         MPI.COMM_WORLD.allReduce(timings, maxTimes, timings.length, MPI.LONG, MPI.MAX);
         MPI.COMM_WORLD.allReduce(timings, minTimes, timings.length, MPI.LONG, MPI.MIN);
 
-        if (rank == 0) {
+        if (rank == 0 && last) {
             try {
                 Utils.logResults(
                     "distributed-min",
@@ -115,6 +112,16 @@ public class Distributed {
                 LOG.log(Level.SEVERE, "Failed to write the results to the file", e);
             }
         }
+    }
+
+    public static void main(String[] args) throws MPIException {
+        //LogManager.getLogManager().reset();
+
+        MPI.Init(args);
+        for (int i = 0; i < 25; i++) {
+            run(args, i == 24);
+        }
+
         MPI.Finalize();
     }
 
