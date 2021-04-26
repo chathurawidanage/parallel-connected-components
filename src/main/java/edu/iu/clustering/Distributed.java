@@ -13,6 +13,8 @@ public class Distributed {
     private static Logger LOG = Logger.getLogger(Distributed.class.getName());
 
     private static void run(String args[], boolean last) throws MPIException {
+        MPI.COMM_WORLD.barrier();
+
         long t1 = System.currentTimeMillis();
         int rank = MPI.COMM_WORLD.getRank();
         int worldSize = MPI.COMM_WORLD.getSize();
