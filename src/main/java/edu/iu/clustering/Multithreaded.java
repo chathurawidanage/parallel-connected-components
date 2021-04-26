@@ -15,10 +15,7 @@ public class Multithreaded {
     public static void main(String[] args) throws InterruptedException {
         long t1 = System.currentTimeMillis();
 
-        int threads = 4;
-        if (args.length > 1) {
-            threads = Integer.parseInt(args[0]);
-        }
+        int threads = Integer.parseInt(args[0]);
 
         LOG.info("Running with " + threads + " threads.");
 
@@ -73,8 +70,8 @@ public class Multithreaded {
 //                for (int j = 0; j < nodes.length; j++) {
 //                    tieBreak.syncAdd(nodes[j], clusters[j]);
 //                }
-                latch.countDown();
                 computeTimes[threadId] = System.currentTimeMillis();
+                latch.countDown();
             });
         }
         latch.await();
